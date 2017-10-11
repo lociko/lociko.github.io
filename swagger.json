@@ -1,0 +1,127 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.0.0",
+    "title": "Links example"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/jasperserver-pro/rest_v2",
+      "description": "Internal staging server for testing"
+    }
+  ],
+  "paths": {
+    "/api/resources/{resourceURI}": {
+      "get": {
+        "tags": [
+          "resources"
+        ],
+        "summary": "Return all attributes",
+        "operationId": "resources",
+        "description": "Get resource by path",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceURI",
+            "required": true,
+            "description": "The resource URI",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "containerType",
+            "description": "The type of the resource",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "expanded",
+            "description": "Include content or not",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Numeric ID of the user to get.",
+            "schema": {
+              "type": "string",
+              "default": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg=="
+            }
+          },
+          {
+            "in": "header",
+            "name": "Accept",
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/attribute"
+                }
+              }
+            },
+            "links": {
+              "self": {
+                "operationId": "resources",
+                "description": "A link which point to the resource.",
+                "parameters": {
+                  "path.resourceUri": "$url"
+                }
+              },
+              "content": {
+                "operationId": "resources",
+                "description": "A link which point to the expanded resource.",
+                "parameters": {
+                  "query.folderUri": "$response.body/uri",
+                  "query.offset": 0,
+                  "query.limit": 100,
+                  "query.recursive": false,
+                  "query.showHiddenItems": false,
+                  "query.Accept": "$request.header.Accept",
+                  "query.containerType": "$request.query.containerType"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "404NotFound": {
+        "description": "The specified resource was not found."
+      }
+    },
+    "schemas": {
+      "attribute": {
+        "type": "object",
+        "example": {
+          "version": 0,
+          "permissionMask": 1,
+          "creationDate": "2017-10-10T02:30:54",
+          "updateDate": "2017-10-10T02:30:54",
+          "label": "Public",
+          "description": "",
+          "uri": "/public"
+        }
+      }
+    }
+  }
+}
